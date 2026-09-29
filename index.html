@@ -157,12 +157,15 @@
       <span>&copy; <span id="year">%YEAR%</span></span>
       <span class="sep" aria-hidden="true">&middot;</span>
       <a href="https://ryan-schachte.com" target="_blank" rel="noopener">ryan-schachte.com<span class="sr-only"> (opens in a new tab)</span></a>
-      <span class="presence" id="presence" hidden>
+      <!-- revealed by tapping the visualizer 5 times -->
+      <span class="egg" id="egg" hidden>
+        <span class="presence" id="presence" hidden>
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <span class="presence-live"><span class="presence-dot" aria-hidden="true"></span><span class="presence-text"><span id="presence-count">1</span> <span id="presence-label">listeners</span></span></span>
+        </span>
         <span class="sep" aria-hidden="true">&middot;</span>
-        <span class="presence-live"><span class="presence-dot" aria-hidden="true"></span><span class="presence-text"><span id="presence-count">1</span> <span id="presence-label">listeners</span></span></span>
+        <button type="button" class="stats-link" id="stats-open" aria-haspopup="dialog">stats</button>
       </span>
-      <span class="sep" aria-hidden="true">&middot;</span>
-      <button type="button" class="stats-link" id="stats-open" aria-haspopup="dialog">stats</button>
     </footer>
     <dialog class="stats" id="stats" aria-labelledby="stats-title">
       <div class="stats-head">

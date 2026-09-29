@@ -1279,3 +1279,30 @@ kbd[data-color-key] {
     animation: none;
   }
 }
+
+/* ---- easter egg ---- */
+.egg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.egg[hidden] {
+  display: none;
+}
+#viz {
+  touch-action: manipulation; /* rapid taps must not double-tap-zoom on iOS */
+  -webkit-tap-highlight-color: transparent;
+}
+#viz.egg-flash {
+  animation: egg-flash 360ms var(--ease);
+}
+@keyframes egg-flash {
+  30% {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #viz.egg-flash {
+    animation: none;
+  }
+}

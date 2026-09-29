@@ -517,6 +517,39 @@ setupPullToRefresh($('.ptr'), $('.card'))
 const presence = setupPresence($('#presence'), $('#presence-count'), $('#presence-label'))
 presenceHook = (on) => presence.setPlaying(on)
 presence.setPlaying(engine.playing)
+// Easter egg: 5 quick taps on the visualizer toggle the footer count + stats link.
+{
+  const egg = $('#egg')
+  const vizEl = $('#viz')
+  const EGG_KEY = 'noise:egg'
+  let on = false
+  try {
+    on = localStorage.getItem(EGG_KEY) === '1'
+  } catch {
+    /* ignore */
+  }
+  egg.hidden = !on
+  let taps = 0
+  let last = 0
+  vizEl.addEventListener('click', () => {
+    const now = performance.now()
+    taps = now - last < 600 ? taps + 1 : 1
+    last = now
+    if (taps < 5) return
+    taps = 0
+    on = !on
+    egg.hidden = !on
+    try {
+      localStorage.setItem(EGG_KEY, on ? '1' : '0')
+    } catch {
+      /* ignore */
+    }
+    vizEl.classList.remove('egg-flash')
+    void vizEl.offsetWidth
+    vizEl.classList.add('egg-flash')
+    announce(on ? 'Stats unlocked' : 'Stats hidden')
+  })
+}
 setupStats(
   $<HTMLDialogElement>('#stats'),
   $<HTMLButtonElement>('#stats-open'),
