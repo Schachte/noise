@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://noise.ryan-schachte.com/sitemap.xml

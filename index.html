@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="noise" />
+    <meta name="description" content="Minimal white noise, brown noise and rain player" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://noise.ryan-schachte.com/" />
+
+    <title>noise — white noise, brown noise &amp; rain</title>
+    <meta property="og:site_name" content="noise" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://noise.ryan-schachte.com/" />
+    <meta property="og:title" content="noise — white noise, brown noise &amp; rain" />
+    <meta property="og:description" content="A tiny, free white noise, brown noise and rain player with volume and tone controls, presets and an ASCII spectrum visualizer. Runs offline. No ads, no tracking." />
+    <meta property="og:image" content="https://noise.ryan-schachte.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The noise app playing brown noise, with its controls and ASCII spectrum visualizer" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="noise — white noise, brown noise &amp; rain" />
+    <meta name="twitter:description" content="A tiny, free white noise, brown noise and rain player. Runs offline. No ads, no tracking." />
+    <meta name="twitter:image" content="https://noise.ryan-schachte.com/og.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "noise",
+        "url": "https://noise.ryan-schachte.com/",
+        "description": "A minimal white noise, brown noise and rain player with volume and tone controls, presets and an ASCII spectrum visualizer.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web",
+        "browserRequirements": "Requires JavaScript and the Web Audio API.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
+    <script>
+      ;(() => {
+        let t = null
+        try { t = localStorage.getItem('noise:theme') } catch {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = t
+        document.querySelector('meta[name=theme-color]').content = t === 'dark' ? '#0b0b0c' : '#ffffff'
+      })()
+    </script>
+  </head>
+  <body>
+    <!-- Visual-only mirror of the play button / colour state; announcements go through #announcer. -->
+    <div class="topbar" aria-hidden="true">
+      <span class="status" id="status">
+        <span class="dot" aria-hidden="true"></span><span id="status-text">idle</span>
+      </span>
+    </div>
+
+    <main class="card" aria-labelledby="title">
+      <header class="head">
+        <h1 id="title">
+          <svg class="logo" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M5 2h6v1H5zM3 3h2v1H3zM11 3h2v1H11zM2 4h1v4H2zM13 4h1v4H13zM2 8h3v1H2zM11 8h3v1H11zM1 9h4v4H1zM11 9h4v4H11zM2 13h3v1H2zM11 13h3v1H11z"/></svg>
+          noise
+        </h1>
+        <div class="head-end">
+          <a class="icon-btn gh" href="https://github.com/Schachte/noise" target="_blank" rel="noopener" aria-label="Source on GitHub (opens in a new tab)">
+            <span class="tip" aria-hidden="true"><span class="tip-text">GitHub</span></span>
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M3 1h2v1H3zM11 1h2v1H11zM3 2h3v1H3zM10 2h3v1H10zM3 3h10v1H3zM2 4h12v1H2zM2 5h12v1H2zM2 6h3v1H2zM7 6h2v1H7zM11 6h3v1H11zM2 7h3v1H2zM7 7h2v1H7zM11 7h3v1H11zM2 8h12v1H2zM3 9h10v1H3zM5 10h6v1H5zM2 11h1v1H2zM6 11h4v1H6zM3 12h7v1H3zM6 13h4v1H6zM6 14h4v1H6z"/></svg>
+          </a>
+          <button type="button" class="icon-btn fav" id="fav" aria-label="Save as preset" aria-keyshortcuts="f">
+            <span class="tip" aria-hidden="true"><span class="tip-text">Save preset</span><kbd>f</kbd></span>
+            <svg class="i-star" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M7 1h2v2H7zM6 3h1v2H6zM9 3h1v2H9zM1 5h5v1H1zM10 5h5v1H10zM2 6h1v1H2zM13 6h1v1H13zM3 7h1v1H3zM12 7h1v1H12zM4 8h1v2H4zM11 8h1v2H11zM7 9h2v1H7zM3 10h1v2H3zM6 10h1v1H6zM9 10h1v1H9zM12 10h1v2H12zM4 11h2v1H4zM10 11h2v1H10zM2 12h2v1H2zM12 12h2v1H12z"/></svg>
+            <svg class="i-star-fill" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M7 1h2v2H7zM6 3h4v2H6zM1 5h14v1H1zM2 6h12v1H2zM3 7h10v1H3zM4 8h8v2H4zM3 10h4v1H3zM9 10h4v1H9zM3 11h3v1H3zM10 11h3v1H10zM2 12h2v1H2zM12 12h2v1H12z"/></svg>
+          </button>
+          <button type="button" class="icon-btn theme" id="theme" aria-label="Switch to light mode" aria-keyshortcuts="t">
+            <span class="tip" aria-hidden="true"><span class="tip-text">Light mode</span><kbd>t</kbd></span>
+            <svg class="i-sun" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M7 1h2v2H7zM2 3h2v2H2zM12 3h2v2H12zM6 4h4v1H6zM5 5h6v1H5zM4 6h8v4H4zM1 7h2v2H1zM13 7h2v2H13zM5 10h6v1H5zM2 11h2v2H2zM6 11h4v1H6zM12 11h2v2H12zM7 13h2v2H7z"/></svg>
+            <svg class="i-moon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M5 1h5v1H5zM3 2h4v1H3zM2 3h4v1H2zM2 4h3v1H2zM1 5h4v3H1zM1 8h5v1H1zM13 8h1v1H13zM1 9h6v1H1zM11 9h3v1H11zM2 10h11v2H2zM3 12h9v1H3zM4 13h7v1H4zM6 14h3v1H6z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <pre class="viz" id="viz" aria-hidden="true"></pre>
+
+      <div class="controls">
+        <div class="segmented" role="radiogroup" aria-label="Sound">
+          <button type="button" role="radio" aria-checked="true" data-color="white" aria-keyshortcuts="1">white</button>
+          <button type="button" role="radio" aria-checked="false" data-color="brown" aria-keyshortcuts="2">brown</button>
+          <button type="button" role="radio" aria-checked="false" data-color="rain" aria-keyshortcuts="3">rain</button>
+        </div>
+
+        <button type="button" class="play" id="play" aria-label="Play noise" aria-keyshortcuts="Space">
+          <span class="glyph" aria-hidden="true">&#9654;</span><span class="label">play</span>
+        </button>
+      </div>
+
+      <div class="sliders">
+        <label class="slider">
+          <span>vol</span>
+          <input id="volume" type="range" min="0" max="100" value="50" aria-label="Volume" aria-valuetext="50%" />
+          <output id="volume-out" for="volume" aria-hidden="true">50</output>
+        </label>
+        <label class="slider">
+          <span>harsh</span>
+          <input id="harsh" type="range" min="0" max="100" value="70" aria-label="Harshness" aria-keyshortcuts="[ ]" title="Double-click to reset" />
+          <output id="harsh-out" for="harsh" aria-hidden="true">70</output>
+        </label>
+      </div>
+
+      <section class="presets-wrap" id="presets-wrap" hidden>
+        <button type="button" class="presets-toggle" id="presets-toggle" aria-expanded="false" aria-controls="presets-drawer">
+          <span>presets</span> <span class="count" id="presets-count">0</span><span class="sr-only"> saved</span>
+          <span class="chev" aria-hidden="true">+</span>
+        </button>
+        <div class="presets-drawer" id="presets-drawer">
+          <div class="presets" id="presets" role="list" aria-label="Presets" inert></div>
+        </div>
+      </section>
+
+      <div class="install" id="install" hidden>
+        <button type="button" class="install-btn" id="install-btn">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M7 2h2v3H7zM6 5h4v1H6zM5 6h6v1H5zM4 7h8v1H4zM2 9h1v2H2zM13 9h1v2H13zM2 11h12v1H2z"/></svg>
+          <span>add to home screen</span>
+        </button>
+        <p class="install-hint" id="install-hint" hidden>
+          <span>Tap <b>Share</b> then <b>Add to Home Screen</b></span>
+          <button type="button" class="install-dismiss" id="install-dismiss" aria-label="Dismiss install hint"><span aria-hidden="true">&times;</span></button>
+        </p>
+      </div>
+
+      <div class="keys" id="keys" role="group" aria-label="Keyboard shortcuts">
+        <span><kbd>space</kbd><span class="k-label">play</span></span>
+        <span><kbd data-color-key="white">1</kbd><kbd data-color-key="brown">2</kbd><kbd data-color-key="rain">3</kbd><span class="k-label">sound</span></span>
+        <span><kbd>&uarr;</kbd><kbd>&darr;</kbd><span class="k-label">vol</span></span>
+        <span><kbd>[</kbd><kbd>]</kbd><span class="k-label">harsh</span></span>
+        <span><kbd>f</kbd><span class="k-label">save</span></span>
+        <span><kbd>t</kbd><span class="k-label">theme</span></span>
+        <!-- WCAG 2.1.4: single-key shortcuts must be switchable off -->
+        <button type="button" class="keys-toggle" id="keys-toggle" role="switch" aria-checked="true" title="Keyboard shortcuts">
+          <svg class="i-kb" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 4h14v1H1zM1 5h1v5H1zM14 5h1v5H14zM3 6h1v1H3zM6 6h1v1H6zM9 6h1v1H9zM12 6h1v1H12zM3 8h1v1H3zM5 8h6v1H5zM12 8h1v1H12zM1 10h14v1H1z"/></svg>
+          <svg class="i-kb-off" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M14 1h1v1H14zM13 2h1v1H13zM12 3h1v1H12zM1 4h11v1H1zM13 4h2v1H13zM1 5h1v5H1zM10 5h1v1H10zM14 5h1v5H14zM3 6h1v1H3zM6 6h1v1H6zM9 6h1v1H9zM12 6h1v1H12zM8 7h1v1H8zM3 8h1v1H3zM5 8h3v1H5zM9 8h2v1H9zM12 8h1v1H12zM6 9h1v1H6zM1 10h5v1H1zM7 10h8v1H7zM4 11h1v1H4zM3 12h1v1H3zM2 13h1v1H2zM1 14h1v1H1z"/></svg>
+        </button>
+      </div>
+
+      <div class="sr-only" id="announcer" role="status" aria-live="polite" aria-atomic="true"></div>
+    </main>
+
+    <footer class="credit">
+      <span>&copy; <span id="year">%YEAR%</span></span>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <a href="https://ryan-schachte.com" target="_blank" rel="noopener">ryan-schachte.com<span class="sr-only"> (opens in a new tab)</span></a>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

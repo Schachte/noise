@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "noise",
+  "compatibility_date": "2026-09-01",
+  // Static-only Worker: Vite's dist/ is served by Workers Static Assets.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+  // To deploy on your own domain, copy this file to wrangler.local.jsonc
+  // (gitignored) and add "account_id" + "routes". See README.
+}
