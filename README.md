@@ -41,6 +41,8 @@ Single-key shortcuts can be turned off with the keyboard icon in the app.
 
 All three go through a low-pass filter and a presence boost, which is what the harshness slider moves.
 
+The live count in the footer is a Durable Object that holds one WebSocket per open tab ([`worker/index.ts`](worker/index.ts)). It stores nothing about visitors.
+
 ## Run locally
 
 ```sh
@@ -50,7 +52,7 @@ npm run dev
 
 ## Deploy
 
-The app is a static build, so it goes anywhere static files go. On Cloudflare Workers, `wrangler.jsonc` serves `dist/` as static assets:
+The app is a static build plus a tiny Worker for the live count. `wrangler.jsonc` serves `dist/` as static assets on Cloudflare Workers:
 
 ```sh
 npm run deploy
@@ -64,7 +66,15 @@ That ships to your default account on a `*.workers.dev` URL. For your own accoun
   "name": "noise",
   "account_id": "<your-account-id>",
   "compatibility_date": "2026-09-01",
-  "assets": { "directory": "./dist", "not_found_handling": "single-page-application" },
+  "main": "worker/index.ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/presence"]
+  },
+  "durable_objects": { "bindings": [{ "name": "PRESENCE", "class_name": "Presence" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Presence"] }],
   "routes": [{ "pattern": "noise.example.com", "custom_domain": true }]
 }
 ```

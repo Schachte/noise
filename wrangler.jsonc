@@ -2,11 +2,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "noise",
   "compatibility_date": "2026-09-01",
-  // Static-only Worker: Vite's dist/ is served by Workers Static Assets.
+  // Worker script only handles /presence (live viewer count); everything else is static.
+  "main": "worker/index.ts",
+  // Vite's dist/ is served by Workers Static Assets.
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/presence"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "PRESENCE", "class_name": "Presence" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Presence"] }]
   // To deploy on your own domain, copy this file to wrangler.local.jsonc
   // (gitignored) and add "account_id" + "routes". See README.
 }

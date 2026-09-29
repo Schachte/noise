@@ -1,0 +1,62 @@
+<!doctype html>
+<!-- Source for public/og.png (share preview). Render: node scripts/render-og.mjs -->
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    background: #0b0b0c;
+    color: #ededef;
+    font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+    padding: 72px 80px 56px;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand { display: flex; align-items: center; gap: 28px; }
+  .brand svg { width: 80px; height: 80px; color: #c8a27c; }
+  h1 { font-size: 104px; font-weight: 600; letter-spacing: -2px; line-height: 1; }
+  p { margin-top: 28px; font-size: 38px; color: #9e9ea6; }
+  pre {
+    margin-top: auto;
+    font: inherit;
+    font-size: 20px;
+    line-height: 22px;
+    color: #c8a27c;
+    white-space: pre;
+    overflow: hidden;
+  }
+  .foot { display: flex; justify-content: space-between; margin-top: 18px; font-size: 22px; color: #7d7d85; }
+  .chips span { border: 1px solid #2e2e33; border-radius: 6px; padding: 4px 12px; margin-left: 10px; color: #9e9ea6; }
+</style>
+</head>
+<body>
+  <div class="brand">
+    <svg viewBox="0 0 16 16" shape-rendering="crispEdges"><path fill="currentColor" d="M5 2h6v1H5zM3 3h2v1H3zM11 3h2v1H11zM2 4h1v4H2zM13 4h1v4H13zM2 8h3v1H2zM11 8h3v1H11zM1 9h4v4H1zM11 9h4v4H11zM2 13h3v1H2zM11 13h3v1H11z"/></svg>
+    <h1>noise</h1>
+  </div>
+  <p>white, brown and rain noise in your browser</p>
+  <pre id="viz"></pre>
+  <div class="foot">
+    <span>noise.ryan-schachte.com</span>
+    <span class="chips"><span>white</span><span>brown</span><span>rain</span></span>
+  </div>
+  <script>
+    // Deterministic brown-noise-shaped spectrum, drawn with the app's glyphs.
+    const cols = 86, rows = 7, TOP = ' .,:-=+*#'
+    let seed = 7
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+    const lines = Array.from({ length: rows }, () => [])
+    for (let c = 0; c < cols; c++) {
+      const x = c / (cols - 1)
+      const h = Math.max(0.6, rows * (0.98 - 0.62 * x ** 1.15) + (rnd() - 0.5) * 0.35)
+      for (let r = 0; r < rows; r++) {
+        const fill = h - r
+        lines[rows - 1 - r].push(fill >= 1 ? '#' : fill <= 0 ? ' ' : TOP[Math.max(1, Math.round(fill * 8))])
+      }
+    }
+    document.getElementById('viz').textContent = lines.map((l) => l.join('')).join('\n')
+  </script>
+</body>
+</html>

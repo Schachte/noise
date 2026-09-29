@@ -770,6 +770,22 @@ input[type='range']::-moz-range-thumb {
   font-size: 11px;
 }
 /* pinned by the mobile layout below */
+.presence {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.presence[hidden] {
+  display: none;
+}
+.presence-dot {
+  width: 6px;
+  height: 6px;
+  margin-right: -2px;
+  border-radius: 50%;
+  background: var(--live);
+}
 
 /* ---- pull to refresh (mobile only) ---- */
 .ptr {

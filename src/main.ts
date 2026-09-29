@@ -1,5 +1,6 @@
 import './style.css'
 import { handleRefreshParam, setupPullToRefresh } from './refresh'
+import { setupPresence } from './presence'
 import { COLORS, HARSH_NEUTRAL, NoiseEngine, soundName, type NoiseColor } from './audio'
 import { AsciiViz } from './viz'
 import {
@@ -509,6 +510,7 @@ sync()
 setShortcuts(shortcutsOn)
 setupPWA()
 setupPullToRefresh($('.ptr'), $('.card'))
+setupPresence($('#presence'), $('#presence-count'))
 
 // Share (mobile only: shown when the native share sheet exists and on small screens).
 const shareBtn = $<HTMLButtonElement>('#share')
