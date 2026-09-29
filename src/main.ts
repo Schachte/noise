@@ -509,6 +509,17 @@ sync()
 setShortcuts(shortcutsOn)
 setupPWA()
 setupPullToRefresh($('.ptr'), $('.card'))
+
+// Share (mobile only: shown when the native share sheet exists and on small screens).
+const shareBtn = $<HTMLButtonElement>('#share')
+if ('share' in navigator && matchMedia('(max-width: 600px)').matches) {
+  shareBtn.hidden = false
+  shareBtn.addEventListener('click', () => {
+    navigator
+      .share({ title: 'noise', text: 'White, brown and rain noise in your browser', url: location.origin + '/' })
+      .catch(() => {}) // user closed the sheet
+  })
+}
 setupInstall({
   root: $('#install'),
   button: $<HTMLButtonElement>('#install-btn'),
