@@ -34,8 +34,16 @@ function fillBrown(data: Float32Array): void {
   }
 }
 
+// iOS/iPadOS: the mute switch silences Web Audio unless the page holds a
+// "playback" audio session, and the session drops when the app backgrounds.
+// A looping inaudible <audio> keeps both alive; other platforms skip it.
+const isIOS = (): boolean =>
+  /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+  (/macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
+
 export class NoiseEngine {
   private ctx: AudioContext | null = null
+  private keep: HTMLAudioElement | null = null
   private gain!: GainNode
   private lowpass!: BiquadFilterNode
   private presence!: BiquadFilterNode
@@ -78,11 +86,17 @@ export class NoiseEngine {
     // iOS PWA: the context can suspend when the app is backgrounded or the screen
     // locks. Resume on return to the app and on any touch while playing.
     document.addEventListener('visibilitychange', () => {
-      if (this.playing && this.ctx && this.ctx.state === 'suspended') void this.ctx.resume()
+      if (this.playing) this.recover()
     })
     window.addEventListener('pointerdown', () => {
-      if (this.playing && this.ctx && this.ctx.state === 'suspended') void this.ctx.resume()
+      if (this.playing) this.recover()
     })
+    ctx.onstatechange = () => {
+      // 'interrupted' is Safari-only (calls, Siri); resume when it clears.
+      if (this.playing && (ctx.state === 'suspended' || (ctx.state as string) === 'interrupted')) {
+        void ctx.resume().catch(() => {})
+      }
+    }
     return ctx
   }
 
@@ -152,6 +166,14 @@ export class NoiseEngine {
     this.startSource()
     this.ramp(this.volume)
     this.playing = true
+    if (isIOS()) {
+      if (!this.keep) {
+        this.keep = new Audio('/silence.wav')
+        this.keep.loop = true
+        this.keep.setAttribute('playsinline', '')
+      }
+      void this.keep.play().catch(() => {}) // must start inside this user gesture
+    }
     // Rain takes ~0.2–1 s to render; do it while idle so switching to it is instant.
     if (!this.buffers.has('rain')) {
       const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 500))
@@ -163,6 +185,15 @@ export class NoiseEngine {
     if (!this.playing || !this.ctx) return
     this.stopSource(this.ramp(0))
     this.playing = false
+    this.keep?.pause()
+  }
+
+  /** Re-grab the audio session after iOS interruptions, backgrounding or lock. */
+  private recover(): void {
+    if (this.ctx && (this.ctx.state === 'suspended' || (this.ctx.state as string) === 'interrupted')) {
+      void this.ctx.resume().catch(() => {})
+    }
+    if (this.keep && this.keep.paused) void this.keep.play().catch(() => {})
   }
 
   toggle(): Promise<void> | void {
@@ -173,6 +204,7 @@ export class NoiseEngine {
     if (color === this.color) return
     this.color = color
     if (!this.playing || !this.ctx) return
+    this.recover()
     // Crossfade: fade out current, swap, fade back in.
     const end = this.ramp(0)
     this.stopSource(end)

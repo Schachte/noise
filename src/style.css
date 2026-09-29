@@ -769,6 +769,7 @@ input[type='range']::-moz-range-thumb {
   color: var(--text-3);
   font-size: 11px;
 }
+/* pinned by the mobile layout below */
 .credit .sep {
   opacity: 0.6;
 }
@@ -901,8 +902,8 @@ input[type='range']:focus-visible::-moz-range-thumb {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 16px
-      max(20px, env(safe-area-inset-left));
+    padding: max(16px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right))
+      calc(44px + env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
     border: 0;
     border-radius: 0;
     box-shadow: none;
@@ -945,6 +946,18 @@ input[type='range']:focus-visible::-moz-range-thumb {
   .chip-x {
     width: 32px;
   }
+
+  /* Footer stays glued to the bottom edge, above the home indicator. */
+  .credit {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    z-index: 1;
+  }
+
   .topbar {
     display: none;
   }
