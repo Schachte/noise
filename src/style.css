@@ -1306,3 +1306,68 @@ kbd[data-color-key] {
     animation: none;
   }
 }
+
+/* ---- heart ---- */
+.heart {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-3);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 150ms var(--ease);
+}
+.heart svg {
+  flex: none;
+}
+.heart:hover,
+.heart.hearted {
+  color: var(--text-2);
+}
+.heart:hover svg,
+.heart.hearted svg {
+  color: var(--heart);
+}
+.heart.capped svg {
+  opacity: 0.45;
+}
+.heart.pop svg {
+  animation: heart-pop 260ms var(--ease);
+}
+@keyframes heart-pop {
+  40% {
+    transform: scale(1.35);
+  }
+}
+:root {
+  --heart: #d92d20;
+}
+:root[data-theme='dark'] {
+  --heart: #f97066;
+}
+.heart-msg {
+  margin: 4px 0 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.heart-widget {
+  min-height: 65px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .heart.pop svg {
+    animation: none;
+  }
+}
+@media (forced-colors: active) {
+  .heart svg {
+    color: CanvasText;
+  }
+}

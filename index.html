@@ -157,6 +157,11 @@
       <span>&copy; <span id="year">%YEAR%</span></span>
       <span class="sep" aria-hidden="true">&middot;</span>
       <a href="https://ryan-schachte.com" target="_blank" rel="noopener">ryan-schachte.com<span class="sr-only"> (opens in a new tab)</span></a>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <button type="button" class="heart" id="heart" aria-label="Send a heart">
+        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M3 2h4v2H3zM9 2h4v2H9zM1 4h14v4H1zM3 8h10v2H3zM5 10h6v2H5zM7 12h2v2H7z"/></svg>
+        <span id="heart-count" hidden>0</span>
+      </button>
       <!-- revealed by tapping the visualizer 5 times -->
       <span class="egg" id="egg" hidden>
         <span class="presence" id="presence" hidden>
@@ -167,6 +172,16 @@
         <button type="button" class="stats-link" id="stats-open" aria-haspopup="dialog">stats</button>
       </span>
     </footer>
+    <dialog class="stats heart-check" id="heart-check" aria-labelledby="heart-check-title">
+      <div class="stats-head">
+        <h2 id="heart-check-title">one sec</h2>
+        <button type="button" class="icon-btn stats-close" id="heart-check-close" aria-label="Close">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M3 3h2v1H3zM11 3h2v1H11zM4 4h2v1H4zM10 4h2v1H10zM5 5h2v1H5zM9 5h2v1H9zM6 6h4v1H6zM7 7h2v2H7zM6 9h4v1H6zM5 10h2v1H5zM9 10h2v1H9zM4 11h2v1H4zM10 11h2v1H10zM3 12h2v1H3zM11 12h2v1H11z"/></svg>
+        </button>
+      </div>
+      <p class="heart-msg" id="heart-check-msg"></p>
+      <div class="heart-widget" id="heart-widget"></div>
+    </dialog>
     <dialog class="stats" id="stats" aria-labelledby="stats-title">
       <div class="stats-head">
         <h2 id="stats-title">stats</h2>

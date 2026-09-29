@@ -27,3 +27,4 @@ dist-ssr
 
 # personal deploy config
 wrangler.local.jsonc
+.dev.vars

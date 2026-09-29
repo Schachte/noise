@@ -10,6 +10,7 @@
 export interface Live {
   n: number
   listening: number
+  hearts?: number
 }
 
 const VID_KEY = 'noise:vid'

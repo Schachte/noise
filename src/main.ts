@@ -2,6 +2,7 @@ import './style.css'
 import { handleRefreshParam, setupPullToRefresh } from './refresh'
 import { setupPresence } from './presence'
 import { setupStats } from './stats'
+import { setupHeart } from './heart'
 import { COLORS, HARSH_NEUTRAL, NoiseEngine, soundName, type NoiseColor } from './audio'
 import { AsciiViz } from './viz'
 import {
@@ -517,6 +518,18 @@ setupPullToRefresh($('.ptr'), $('.card'))
 const presence = setupPresence($('#presence'), $('#presence-count'), $('#presence-label'))
 presenceHook = (on) => presence.setPlaying(on)
 presence.setPlaying(engine.playing)
+const heart = setupHeart({
+  button: $<HTMLButtonElement>('#heart'),
+  count: $('#heart-count'),
+  dialog: $<HTMLDialogElement>('#heart-check'),
+  widget: $('#heart-widget'),
+  close: $<HTMLButtonElement>('#heart-check-close'),
+  message: $('#heart-check-msg'),
+  announce,
+})
+presence.onLive((l) => {
+  if (typeof l.hearts === 'number') heart.setTotal(l.hearts)
+})
 // Easter egg: 5 quick taps on the visualizer toggle the footer count + stats link.
 {
   const egg = $('#egg')

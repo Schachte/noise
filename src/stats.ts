@@ -1,6 +1,7 @@
 import type { Live } from './presence'
 
 interface Stats extends Live {
+  heartsDaily: number[]
   hourly: number[]
   today: number
   daily: number[]
@@ -60,6 +61,7 @@ export function setupStats(
         d.minutes.daily,
         'minutes listened per day, last 14 days',
       ),
+      row('hearts', num(d.hearts ?? 0), d.heartsDaily, 'hearts per day, last 14 days'),
     ].join('')
   }
 
@@ -81,7 +83,7 @@ export function setupStats(
     // "now" updates instantly from the WebSocket between fetches
     unsub = presence.onLive((l) => {
       if (!data) return
-      data = { ...data, n: l.n, listening: l.listening }
+      data = { ...data, n: l.n, listening: l.listening, hearts: l.hearts ?? data.hearts }
       render()
     })
   })

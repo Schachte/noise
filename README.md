@@ -79,6 +79,15 @@ That ships to your default account on a `*.workers.dev` URL. For your own accoun
 }
 ```
 
+Hearts are capped at 20 per person per hour. To let people pass a [Turnstile](https://developers.cloudflare.com/turnstile/) check and keep going, create a widget for your domain and add its keys:
+
+```sh
+# the site key is public; put "vars": { "TURNSTILE_SITEKEY": "..." } in your config
+npx wrangler secret put TURNSTILE_SECRET -c wrangler.local.jsonc
+```
+
+For local `wrangler dev`, put Cloudflare's [test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) in a gitignored `.dev.vars`.
+
 ```sh
 npm run deploy:local
 ```
