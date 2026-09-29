@@ -159,26 +159,35 @@ export class NoiseEngine {
     return now + FADE
   }
 
+  /**
+   * Everything up to starting the source runs synchronously: iOS only honours
+   * audio started inside the tap itself, and an `await` ends the tap.
+   */
   async play(): Promise<void> {
-    const ctx = this.ensure()
-    if (ctx.state === 'suspended') await ctx.resume()
     if (this.playing) return
-    this.startSource()
-    this.ramp(this.volume)
-    this.playing = true
+    // Safari 17+: official switch from "ambient" (silenced by the mute switch)
+    // to "playback" audio.
+    const nav = navigator as Navigator & { audioSession?: { type: string } }
+    if (nav.audioSession) nav.audioSession.type = 'playback'
+    const ctx = this.ensure()
     if (isIOS()) {
       if (!this.keep) {
         this.keep = new Audio('/silence.wav')
         this.keep.loop = true
         this.keep.setAttribute('playsinline', '')
       }
-      void this.keep.play().catch(() => {}) // must start inside this user gesture
+      void this.keep.play().catch(() => {})
     }
+    const resumed = ctx.state === 'running' ? Promise.resolve() : ctx.resume()
+    this.startSource()
+    this.ramp(this.volume)
+    this.playing = true
     // Rain takes ~0.2–1 s to render; do it while idle so switching to it is instant.
     if (!this.buffers.has('rain')) {
       const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 500))
       idle(() => this.buffer('rain'))
     }
+    await resumed.catch(() => {})
   }
 
   stop(): void {

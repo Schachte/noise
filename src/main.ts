@@ -1,4 +1,5 @@
 import './style.css'
+import { handleRefreshParam, setupPullToRefresh } from './refresh'
 import { COLORS, HARSH_NEUTRAL, NoiseEngine, soundName, type NoiseColor } from './audio'
 import { AsciiViz } from './viz'
 import {
@@ -503,9 +504,11 @@ setHarsh(prefs.harsh)
 renderPresets()
 applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark')
 $('#year').textContent = String(new Date().getFullYear())
+handleRefreshParam()
 sync()
 setShortcuts(shortcutsOn)
 setupPWA()
+setupPullToRefresh($('.ptr'), $('.card'))
 setupInstall({
   root: $('#install'),
   button: $<HTMLButtonElement>('#install-btn'),

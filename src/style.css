@@ -770,6 +770,11 @@ input[type='range']::-moz-range-thumb {
   font-size: 11px;
 }
 /* pinned by the mobile layout below */
+
+/* ---- pull to refresh (mobile only) ---- */
+.ptr {
+  display: none;
+}
 .credit .sep {
   opacity: 0.6;
 }
@@ -958,6 +963,44 @@ input[type='range']:focus-visible::-moz-range-thumb {
     z-index: 1;
   }
 
+  .ptr {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 8px);
+    left: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-2);
+    font-size: 11px;
+    pointer-events: none;
+    opacity: var(--ptr-o, 0);
+    transform: translate(-50%, var(--ptr-y, -48px));
+    transition: transform 220ms var(--ease), opacity 220ms var(--ease);
+  }
+  .ptr-glyph {
+    display: inline-block;
+    transition: transform 160ms var(--ease);
+  }
+  .ptr.ready .ptr-glyph {
+    transform: rotate(180deg);
+  }
+  .ptr.spinning .ptr-glyph {
+    animation: ptr-spin 700ms linear infinite;
+  }
+  .card {
+    transform: translateY(var(--pull, 0px));
+    transition: transform 220ms var(--ease);
+  }
+  .ptr.dragging,
+  .card.dragging {
+    transition: none;
+  }
+
   .topbar {
     display: none;
   }
@@ -1093,4 +1136,18 @@ kbd[data-color-key] {
   color: var(--text);
   border-color: var(--border-strong);
   background: var(--bg);
+}
+
+@keyframes ptr-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ptr.spinning .ptr-glyph {
+    animation: none;
+  }
 }
