@@ -1,6 +1,7 @@
 import './style.css'
 import { handleRefreshParam, setupPullToRefresh } from './refresh'
 import { setupPresence } from './presence'
+import { setupStats } from './stats'
 import { COLORS, HARSH_NEUTRAL, NoiseEngine, soundName, type NoiseColor } from './audio'
 import { AsciiViz } from './viz'
 import {
@@ -18,6 +19,8 @@ import { setupPWA, setupMediaSession, setupInstall } from './pwa'
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!
 
 const engine = new NoiseEngine()
+/** set once presence is connected; lets sync() report play/stop */
+let presenceHook: ((playing: boolean) => void) | null = null
 const vizEl = $('#viz')
 const viz = new AsciiViz(vizEl)
 const playBtn = $<HTMLButtonElement>('#play')
@@ -121,6 +124,7 @@ function sync(): void {
   document.documentElement.dataset.color = engine.color
   segmented.dataset.value = engine.color
   updateMedia(on, soundName(engine.color))
+  presenceHook?.(on)
   syncPresets()
 }
 
@@ -510,7 +514,16 @@ sync()
 setShortcuts(shortcutsOn)
 setupPWA()
 setupPullToRefresh($('.ptr'), $('.card'))
-setupPresence($('#presence'), $('#presence-count'))
+const presence = setupPresence($('#presence'), $('#presence-count'), $('#presence-label'))
+presenceHook = (on) => presence.setPlaying(on)
+presence.setPlaying(engine.playing)
+setupStats(
+  $<HTMLDialogElement>('#stats'),
+  $<HTMLButtonElement>('#stats-open'),
+  $<HTMLButtonElement>('#stats-close'),
+  $('#stats-rows'),
+  presence,
+)
 
 // Share (mobile only: shown when the native share sheet exists and on small screens).
 const shareBtn = $<HTMLButtonElement>('#share')

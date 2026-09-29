@@ -71,7 +71,7 @@ That ships to your default account on a `*.workers.dev` URL. For your own accoun
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/presence"]
+    "run_worker_first": ["/presence", "/api/*"]
   },
   "durable_objects": { "bindings": [{ "name": "PRESENCE", "class_name": "Presence" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Presence"] }],

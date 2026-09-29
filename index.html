@@ -159,9 +159,23 @@
       <a href="https://ryan-schachte.com" target="_blank" rel="noopener">ryan-schachte.com<span class="sr-only"> (opens in a new tab)</span></a>
       <span class="presence" id="presence" hidden>
         <span class="sep" aria-hidden="true">&middot;</span>
-        <span class="presence-dot" aria-hidden="true"></span><span id="presence-count">1</span><span>&nbsp;here</span>
+        <span class="presence-live"><span class="presence-dot" aria-hidden="true"></span><span class="presence-text"><span id="presence-count">1</span> <span id="presence-label">listeners</span></span></span>
       </span>
+      <span class="sep" aria-hidden="true">&middot;</span>
+      <button type="button" class="stats-link" id="stats-open" aria-haspopup="dialog">stats</button>
     </footer>
+    <dialog class="stats" id="stats" aria-labelledby="stats-title">
+      <div class="stats-head">
+        <h2 id="stats-title">stats</h2>
+        <button type="button" class="icon-btn stats-close" id="stats-close" aria-label="Close stats">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M3 3h2v1H3zM11 3h2v1H11zM4 4h2v1H4zM10 4h2v1H10zM5 5h2v1H5zM9 5h2v1H9zM6 6h4v1H6zM7 7h2v2H7zM6 9h4v1H6zM5 10h2v1H5zM9 10h2v1H9zM4 11h2v1H4zM10 11h2v1H10zM3 12h2v1H3zM11 12h2v1H11z"/></svg>
+        </button>
+      </div>
+      <dl class="stats-rows" id="stats-rows">
+        <p class="stats-empty">loading…</p>
+      </dl>
+      <p class="stats-note">counts only · no cookies · no IPs</p>
+    </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

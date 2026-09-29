@@ -776,13 +776,17 @@ input[type='range']::-moz-range-thumb {
   gap: 8px;
   font-variant-numeric: tabular-nums;
 }
+.presence-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 .presence[hidden] {
   display: none;
 }
 .presence-dot {
   width: 6px;
   height: 6px;
-  margin-right: -2px;
   border-radius: 50%;
   background: var(--live);
 }
@@ -1174,4 +1178,104 @@ kbd[data-color-key] {
 
 .icon-btn[hidden] {
   display: none;
+}
+
+/* ---- stats (footer link + dialog) ---- */
+.stats-link {
+  padding: 4px 2px;
+  margin: -4px -2px;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.stats-link:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+.stats {
+  width: min(420px, calc(100% - 32px));
+  padding: 16px 20px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+.stats::backdrop {
+  background: rgb(0 0 0 / 0.35);
+}
+.stats[open] {
+  animation: stats-in 180ms var(--ease);
+}
+@keyframes stats-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.stats-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -6px -10px 8px 0;
+}
+.stats-head h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.stats-rows {
+  margin: 0;
+}
+.stats-row {
+  display: grid;
+  grid-template-columns: 10ch 1fr;
+  align-items: start;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.stats-row dt {
+  color: var(--text-3);
+}
+.stats-row dd {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  min-width: 0;
+}
+.stats-value {
+  font-variant-numeric: tabular-nums;
+}
+.stats-spark {
+  overflow: hidden;
+  color: var(--viz);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.stats-empty {
+  margin: 8px 0;
+  color: var(--text-3);
+}
+.stats-note {
+  margin: 8px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 11px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .stats[open] {
+    animation: none;
+  }
 }
